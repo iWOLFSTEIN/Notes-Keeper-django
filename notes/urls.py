@@ -4,5 +4,7 @@ from . import views
 urlpatterns = [
     path('allrecords/', views.getAllTheNotes),
     path('add/', views.addNote),
-    path('get/', views.getNote)
+    path('get/', views.getNote),
+    path('update/', views.updateNote),
+    path('delete/', views.deleteNote)
 ]

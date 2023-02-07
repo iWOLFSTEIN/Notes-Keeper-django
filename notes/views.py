@@ -11,12 +11,25 @@ def getAllTheNotes(request):
 
 @api_view(['GET'])
 def getNote(request):
-    name = request.query_params.get("name")
-    note = getSingleNotesTableRow(name)
+    note = getSingleNotesTableRow(request)
     return Response(note)
 
 
 @api_view(['POST'])
 def addNote(request):
     note = insertRowInNotesTable(request)
+    if note.get('error'):
+        return Response(note, 400)
     return Response(note)
+
+
+@api_view(['POST'])
+def updateNote(request):
+    response = updateNotesTableRow(request)
+    return Response(response)
+
+
+@api_view(['GET'])
+def deleteNote(request):
+    response = deleteNotesTableRow(request)
+    return Response(response)
