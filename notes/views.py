@@ -1,35 +1,49 @@
-from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .controller import *
 
 
 @api_view(['GET'])
 def getAllTheNotes(request):
-    notes = getAllTheNotesTableRow()
-    return Response(notes)
+    response = getAllTheNotesTableRow()
+    return response
 
 
 @api_view(['GET'])
 def getNote(request):
-    note = getSingleNotesTableRow(request)
-    return Response(note)
+    response = getSingleNotesTableRow(request)
+    return response
 
 
 @api_view(['POST'])
 def addNote(request):
-    note = insertRowInNotesTable(request)
-    if note.get('error'):
-        return Response(note, 400)
-    return Response(note)
+    response = insertRowInNotesTable(request)
+    return response
 
 
 @api_view(['POST'])
 def updateNote(request):
     response = updateNotesTableRow(request)
-    return Response(response)
+    return response
 
 
 @api_view(['GET'])
 def deleteNote(request):
     response = deleteNotesTableRow(request)
-    return Response(response)
+    return response
+
+@api_view(['GET'])
+def deleteAllTheNotes(request):
+    response = deleteAllTheNotesTableRows()
+    return response
+
+
+@api_view(['POST'])
+def register(request):
+    response = registerUser(request)
+    return response
+
+
+@api_view(['POST'])
+def login(request):
+    response = loginUser(request)
+    return response
