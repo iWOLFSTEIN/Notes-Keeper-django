@@ -6,7 +6,6 @@ class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
         fields = '__all__'
-        # ('name', 'description')
 
 
 class UserSerializer(serializers.ModelSerializer):

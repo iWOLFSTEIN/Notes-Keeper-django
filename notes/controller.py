@@ -26,8 +26,10 @@ def verifyJwtToken(func):
     return decorator
 
 
-def getAllTheNotesTableRow():
-    rows = Note.objects.all()
+
+@verifyJwtToken
+def getAllTheNotesTableRow(request, user):
+    rows = Note.objects.filter(foreign_key = user)
     '''
     converts the Note class into json format
     '''
@@ -47,22 +49,24 @@ def insertRowInNotesTable(request, user):
 
 @verifyJwtToken
 def getSingleNotesTableRow(request, user):
-    name = request.query_params.get("name")
-    rows = (Note.objects.filter(foreign_key = user) & Note.objects.filter(name__startswith= name))
-    response = []
-    for row in rows:
-        serialized_note = NoteSerializer(row).data
-        response.append(serialized_note)
-
-    return Response(response)
+    id = request.query_params.get("id")
+    try:
+        row = Note.objects.get(id=id, foreign_key = user)
+    except:
+        return Response({'error': 'note does not exist'}, 400)
+    return Response(NoteSerializer(row).data)
 
 
 @verifyJwtToken
 def updateNotesTableRow(request, user):
-    name = request.query_params.get("name")
+    id = request.query_params.get("id")
     payload = request.POST.dict()
-    row = Note.objects.get(name=name)
-    row.name = name
+    try:
+         row = Note.objects.get(id=id, foreign_key = user)
+    except:
+        return Response({'error': 'note does not exist'}, 400)
+    
+    row.name = payload['name']
     row.description = payload['description']
     row.save()
     return Response({'successful': True})
@@ -70,15 +74,19 @@ def updateNotesTableRow(request, user):
 
 @verifyJwtToken
 def deleteNotesTableRow(request, user):
-    name = request.query_params.get("name")
-    row = Note.objects.get(name=name)
+    id = request.query_params.get("id")
+    try:
+         row = Note.objects.get(id=id, foreign_key = user)
+    except:
+        return Response({'error': 'note does not exist'}, 400)
+    
     data = row.delete()
-    print(data)
     return Response({'successful': True})
 
 
-def deleteAllTheNotesTableRows():
-    rows = Note.objects.all().delete()
+@verifyJwtToken
+def deleteAllTheNotesTableRows(request, user):
+    rows = Note.objects.filter(foreign_key=user).delete()
     return Response({'successful': True})
 
 
@@ -88,7 +96,6 @@ def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
 
     return {
-        'refresh': str(refresh),
         'access': str(refresh.access_token),
     }
 
@@ -97,6 +104,7 @@ def registerUser(request):
     
     if serialized_user.is_valid():
         user = serialized_user.save()
+        print(user)
         return Response(get_tokens_for_user(user))
     else:
         return Response({'error': 'invalid request'}, 400)
@@ -104,8 +112,10 @@ def registerUser(request):
 
 
 def loginUser(request):
-    user = authenticate(email=request.data['email'],password=request.data['password'])
-    print(user)
-    if user is not None:
-        print('user exist')
-    return Response({})
+    all_user = CustomUser.objects.filter(email=request.data['email'])
+    if not all_user.exists():
+        return Response({'error': 'user does not exist'}, 400)
+    
+    for user in all_user:
+        None
+    return Response(get_tokens_for_user(user))

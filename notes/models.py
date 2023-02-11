@@ -8,15 +8,11 @@ from .manager import *
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    # username=None
-    # first_name=None
-    # last_name=None
     email = models.CharField(max_length=256, unique=True, null=False)
     password = models.CharField(max_length=128)
     name = models.CharField(max_length=256)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    # is_active = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 

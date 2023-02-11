@@ -4,7 +4,7 @@ from .controller import *
 
 @api_view(['GET'])
 def getAllTheNotes(request):
-    response = getAllTheNotesTableRow()
+    response = getAllTheNotesTableRow(request)
     return response
 
 
@@ -33,7 +33,7 @@ def deleteNote(request):
 
 @api_view(['GET'])
 def deleteAllTheNotes(request):
-    response = deleteAllTheNotesTableRows()
+    response = deleteAllTheNotesTableRows(request)
     return response
 
 
